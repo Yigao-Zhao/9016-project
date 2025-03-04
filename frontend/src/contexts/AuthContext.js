@@ -33,7 +33,8 @@ export function AuthProvider({ children }) {
         uid: userCredential.user.uid,
         username,
         email,
-        fullName
+        fullName,
+        password
       }, {
         headers: {
           Authorization: `Bearer ${token}`
