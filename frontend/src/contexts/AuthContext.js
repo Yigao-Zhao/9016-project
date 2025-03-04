@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
 
   async function register(email, password, username, fullName) {
+    
     try {
       // 创建Firebase用户
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,7 +43,7 @@ export function AuthProvider({ children }) {
       setUserProfile(response.data);
       return userCredential.user;
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration error:", error.response?.data || error.message);
       throw error;
     }
   }

@@ -7,14 +7,14 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { limit = 20, offset = 0 } = req.query;
-    
+
     const db = req.db;
-    
+
     const [users] = await db.query(
       'SELECT user_id, username, full_name, bio, profile_image_url FROM users LIMIT ? OFFSET ?',
       [parseInt(limit), parseInt(offset)]
     );
-    
+
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -25,19 +25,19 @@ router.get('/', async (req, res) => {
 // 获取特定用户
 router.get('/:id', async (req, res) => {
   try {
-    const userId = req.params.id;
-    
+    const userId = req.params.id;  // 保持为字符串
+
     const db = req.db;
-    
+
     const [users] = await db.query(
       'SELECT user_id, username, full_name, bio, profile_image_url, created_at FROM users WHERE user_id = ?',
-      [userId]
+      [userId]  // 确保用字符串比较
     );
-    
+
     if (users.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json(users[0]);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -48,30 +48,30 @@ router.get('/:id', async (req, res) => {
 // 更新用户信息
 router.put('/:id', authenticate, async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.id;  // 保持为字符串
     const { fullName, bio, profileImageUrl } = req.body;
-    
+
     const db = req.db;
-    
+
     // 确保用户只能更新自己的个人资料
-    if (parseInt(userId) !== req.user.userId) {
+    if (userId !== req.user.uid) {  // 使用 Firebase 验证后的 userId
       return res.status(403).json({ error: 'Not authorized' });
     }
-    
+
     const [result] = await db.query(
       'UPDATE users SET full_name = ?, bio = ?, profile_image_url = ? WHERE user_id = ?',
       [fullName, bio, profileImageUrl, userId]
     );
-    
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     const [updatedUser] = await db.query(
       'SELECT user_id, username, full_name, bio, profile_image_url, updated_at FROM users WHERE user_id = ?',
       [userId]
     );
-    
+
     res.json(updatedUser[0]);
   } catch (error) {
     console.error('Error updating user:', error);
