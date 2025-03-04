@@ -16,13 +16,14 @@ if (!admin.apps.length) {
 // 注册
 router.post('/register', async (req, res) => {
   try {
+    console.log(req.body);
     const { username, email, password, fullName, firebaseToken } = req.body;
     const db = req.db;
-    
-  // 检查必填字段是否为空
-  if (!username || !email || !password || !fullName) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
+
+    // 检查必填字段是否为空
+    if (!username || !email || !password || !fullName) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
 
     // 检查是否已有用户
     const [userCheck] = await db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
@@ -35,8 +36,19 @@ router.post('/register', async (req, res) => {
 
     // 如果提供了 Firebase Token，则验证 Firebase 用户
     if (firebaseToken) {
-      const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
-      firebaseUid = decodedToken.uid;
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
+        firebaseUid = decodedToken.uid;
+        console.log("firebaseUid:", firebaseUid);
+        // 更新 Firebase 用户的 displayName
+        await admin.auth().updateUser(firebaseUid, {
+          displayName: username, // 将用户名存到 displayName 字段
+        });
+
+      } catch (error) {
+        console.error("Error verifying Firebase token:", error);
+        return res.status(401).json({ error: 'Invalid Firebase Token' });
+      }
     } else {
       if (!password) {
         return res.status(400).json({ error: 'Password is required' });
@@ -46,15 +58,22 @@ router.post('/register', async (req, res) => {
     }
 
     // 创建用户
+    // 创建用户
     const [result] = await db.query(
-      'INSERT INTO users (username, email, password_hash, full_name, firebase_uid, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
-      [username, email, passwordHash, fullName, firebaseUid]
+      'INSERT INTO users (username, email, password_hash, full_name, user_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
+      [
+        username,
+        email,
+        firebaseToken ? null : passwordHash,  // 如果有 Firebase Token，就传入 null，否则使用 passwordHash
+        fullName,
+        firebaseUid
+      ]
     );
 
     // 生成 JWT
-    const token = jwt.sign({ userId: result.insertId, username, email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ userId: firebaseUid, username, email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
-    res.status(201).json({ user: { userId: result.insertId, username, email, fullName }, token });
+    res.status(201).json({ user: { userId: firebaseUid, username, email, fullName }, token });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Server error' });
@@ -103,11 +122,11 @@ router.get('/me', authenticate, async (req, res) => {
   console.log("GET /api/auth/me 被调用了");
   try {
     const db = req.db;
-    
+
     console.log('Authenticated User:', req.user); // 调试用
 
     const [users] = await db.query(
-      'SELECT user_id, username, email, full_name, created_at FROM users WHERE user_id = ?', 
+      'SELECT user_id, username, email, full_name, created_at FROM users WHERE user_id = ?',
       [req.user.uid]  // Firebase Token 里的 uid
     );
 

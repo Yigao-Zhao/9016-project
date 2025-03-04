@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Firebase认证库
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -10,30 +10,55 @@ function Register() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
   const navigate = useNavigate();
   
+  const auth = getAuth(); // 获取 Firebase 认证实例
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
       return setError('两次输入的密码不匹配');
     }
-    
+
+    console.log("Registering with:", { email, password, username, fullName });
+
     try {
       setError('');
       setLoading(true);
-      await register(email, password, username, fullName);
-      navigate('/');
+      
+      // 使用 Firebase 注册新用户
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;  // 获取当前用户信息
+
+      // 获取 Firebase ID Token
+      const firebaseToken = await user.getIdToken();  // 获取 Firebase Token
+
+      // 发送到后端进行注册
+      const response = await fetch('http://localhost:3001/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          username,
+          fullName,
+          firebaseToken,  // 将 Firebase Token 发送到后端
+          password,       // 如果没有 Firebase Token，包含密码
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // 注册成功后跳转
+        navigate('/');
+      } else {
+        setError(data.error || '注册失败，请重试');
+      }
     } catch (error) {
       console.error('Registration error:', error);
-      if (error.code === 'auth/email-already-in-use') {
-        setError('此邮箱已被注册');
-      } else if (error.code === 'auth/weak-password') {
-        setError('密码强度不够，请使用更复杂的密码');
-      } else {
-        setError('注册失败，请重试');
-      }
+      setError('注册失败，请重试');
     } finally {
       setLoading(false);
     }
