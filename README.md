@@ -49,5 +49,4 @@ The application should now be running and accessible through your browser.
 
 - Make sure the database is properly set up and running before starting the backend server.
 - Ensure all environment variables are correctly configured in a `.env` file.
-- The backend uses Express.js for the server and PostgreSQL for the database.
-- The frontend is built with React and uses additional libraries like Bootstrap for UI components and Firebase for authentication.
+- The frontend is built with React and uses additional libraries.
