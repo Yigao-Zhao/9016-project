@@ -18,24 +18,24 @@ function Profile() {
     async function fetchUserProfile() {
       try {
         setLoading(true);
-        // 先根据用户名查找用户
+        // Find user by username
         const usersResponse = await userApi.getUsers();
         const foundUser = usersResponse.data.find(user => user.username === username);
         
         if (!foundUser) {
-          setError('用户不存在');
+          setError('User not found');
           setLoading(false);
           return;
         }
         
         setUserId(foundUser.user_id);
         
-        // 获取详细资料
+        // Get user profile
         const profileResponse = await userApi.getUser(foundUser.user_id);
         setProfile(profileResponse.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
-        setError('加载用户资料失败');
+        setError('Failed to load user profile');
       } finally {
         setLoading(false);
       }
@@ -54,7 +54,7 @@ function Profile() {
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      alert('更新资料失败，请重试');
+      alert('Failed to update profile, please try again');
     }
   };
   
@@ -62,7 +62,7 @@ function Profile() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">加载中...</span>
+          <span className="visually-hidden">Loading...</span>
         </div>
       </div>
     );
@@ -82,7 +82,7 @@ function Profile() {
             <div className="col-md-3 text-center">
               <img 
                 src={profile.profile_image_url || '/default-avatar.png'} 
-                alt={`${profile.username}的头像`} 
+                alt={`${profile.username}Profile Photo`} 
                 className="rounded-circle mb-3" 
                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}
               />
@@ -104,16 +104,16 @@ function Profile() {
                         className="btn btn-outline-primary btn-sm"
                         onClick={() => setIsEditing(true)}
                       >
-                        编辑资料
+                        Editing Profile
                       </button>
                     )}
                   </div>
                   
                   <h5>{profile.full_name}</h5>
                   <p className="text-muted mb-3">
-                    加入于 {new Date(profile.created_at).toLocaleDateString('zh-CN')}
+                    Join in {new Date(profile.created_at).toLocaleDateString('zh-CN')}
                   </p>
-                  <p>{profile.bio || '这个用户还没有添加个人简介'}</p>
+                  <p>{profile.bio || 'The user did not upload any personal profile'}</p>
                 </>
               )}
             </div>
@@ -121,7 +121,7 @@ function Profile() {
         </div>
       </div>
       
-      <h4 className="mb-3">帖子</h4>
+      <h4 className="mb-3">Post</h4>
       <PostList userId={userId} />
     </div>
   );

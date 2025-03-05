@@ -22,11 +22,11 @@ export function AuthProvider({ children }) {
 
   async function register(email, password, username, fullName) {
     try {
-      // 创建Firebase用户
+      // Create user in Firebase
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: username });
       
-      // 调用后端API创建用户资料
+      // Call backend API to create user profile
       const token = await userCredential.user.getIdToken();
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, {
         uid: userCredential.user.uid,
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
-  // 加载用户资料
+  // Loading user profile
   async function loadUserProfile(user) {
     try {
       if (!user) return;

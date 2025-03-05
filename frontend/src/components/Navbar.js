@@ -32,13 +32,13 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/">首页</Link>
+              <Link className="nav-link" to="/">Home</Link>
             </li>
             
             {currentUser ? (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/create-post">发布帖子</Link>
+                  <Link className="nav-link" to="/create-post">Post</Link>
                 </li>
                 
                 <li className="nav-item">
@@ -46,7 +46,7 @@ function Navbar() {
                     className="nav-link" 
                     to={`/profile/${currentUser.displayName}`}
                   >
-                    个人资料
+                    Personal Profile
                   </Link>
                 </li>
                 
@@ -55,18 +55,18 @@ function Navbar() {
                     onClick={handleLogout} 
                     className="nav-link btn btn-link"
                   >
-                    退出登录
+                    Logout
                   </button>
                 </li>
               </>
             ) : (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login">登录</Link>
+                  <Link className="nav-link" to="/login">Login</Link>
                 </li>
                 
                 <li className="nav-item">
-                  <Link className="nav-link" to="/register">注册</Link>
+                  <Link className="nav-link" to="/register">Register</Link>
                 </li>
               </>
             )}

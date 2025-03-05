@@ -9,10 +9,10 @@ function Home() {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3>最新动态</h3>
+        <h3>Latest News</h3>
         {currentUser && (
           <Link to="/create-post" className="btn btn-primary">
-            发布帖子
+            Create new post
           </Link>
         )}
       </div>

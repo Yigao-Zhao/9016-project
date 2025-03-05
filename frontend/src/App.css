@@ -29,13 +29,13 @@ a:hover {
   opacity: 0.8;
 }
 
-/* 帖子样式 */
+/* Posting Style */
 .post-image {
   max-height: 400px;
   object-fit: contain;
 }
 
-/* 加载动画 */
+/* Loading animation */
 .spinner-border {
   width: 2rem;
   height: 2rem;

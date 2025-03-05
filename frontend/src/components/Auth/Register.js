@@ -17,7 +17,7 @@ function Register() {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      return setError('两次输入的密码不匹配');
+      return setError('Passwords do not match');
     }
     
     try {
@@ -28,11 +28,11 @@ function Register() {
     } catch (error) {
       console.error('Registration error:', error);
       if (error.code === 'auth/email-already-in-use') {
-        setError('此邮箱已被注册');
+        setError('Email is already registered');
       } else if (error.code === 'auth/weak-password') {
-        setError('密码强度不够，请使用更复杂的密码');
+        setError('Password is too weak, please use a stronger password');
       } else {
-        setError('注册失败，请重试');
+        setError('Failed to register, please try again');
       }
     } finally {
       setLoading(false);
@@ -44,13 +44,13 @@ function Register() {
       <div className="col-md-6">
         <div className="card">
           <div className="card-body">
-            <h2 className="text-center mb-4">注册</h2>
+            <h2 className="text-center mb-4">Register</h2>
             
             {error && <div className="alert alert-danger">{error}</div>}
             
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">邮箱</label>
+                <label htmlFor="email" className="form-label">Email</label>
                 <input
                   type="email"
                   id="email"
@@ -62,7 +62,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="username" className="form-label">用户名</label>
+                <label htmlFor="username" className="form-label">Username</label>
                 <input
                   type="text"
                   id="username"
@@ -74,7 +74,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="fullName" className="form-label">全名</label>
+                <label htmlFor="fullName" className="form-label">Full Name</label>
                 <input
                   type="text"
                   id="fullName"
@@ -86,7 +86,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">密码</label>
+                <label htmlFor="password" className="form-label">Password</label>
                 <input
                   type="password"
                   id="password"
@@ -98,7 +98,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">确认密码</label>
+                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
@@ -114,12 +114,12 @@ function Register() {
                 className="btn btn-primary w-100" 
                 disabled={loading}
               >
-                {loading ? '注册中...' : '注册'}
+                {loading ? 'Registering...' : 'Register'}
               </button>
             </form>
             
             <div className="text-center mt-3">
-              已有账号？ <Link to="/login">登录</Link>
+              Already have an account? <Link to="/login">Login</Link>
             </div>
           </div>
         </div>

@@ -8,11 +8,11 @@ function EditProfile({ profile, onUpdate, onCancel }) {
   const [error, setError] = useState('');
   const [previewError, setPreviewError] = useState(false);
   
-  // 处理图片URL验证
+  // Handle image URL validation
   const validateImageUrl = (url) => {
     if (!url) return true;
     
-    // 简单的URL验证
+    // Simple URL validation
     const urlPattern = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/.*)?$/i;
     return urlPattern.test(url);
   };
@@ -21,7 +21,7 @@ function EditProfile({ profile, onUpdate, onCancel }) {
     e.preventDefault();
     
     if (profileImageUrl && !validateImageUrl(profileImageUrl)) {
-      return setError('请输入有效的图片URL');
+      return setError('Please enter a valid image URL');
     }
     
     setLoading(true);
@@ -34,7 +34,7 @@ function EditProfile({ profile, onUpdate, onCancel }) {
       });
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError('更新资料失败，请重试');
+      setError('Failed to update profile, please try again');
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ function EditProfile({ profile, onUpdate, onCancel }) {
       {error && <div className="alert alert-danger mb-3">{error}</div>}
       
       <div className="mb-3">
-        <label htmlFor="profileImageUrl" className="form-label">头像URL</label>
+        <label htmlFor="profileImageUrl" className="form-label">Avatar URL</label>
         <input
           type="url"
           id="profileImageUrl"
@@ -68,7 +68,7 @@ function EditProfile({ profile, onUpdate, onCancel }) {
         <div className="mb-3 text-center">
           <img 
             src={profileImageUrl} 
-            alt="头像预览" 
+            alt="Avatar Preview" 
             className={`rounded-circle ${previewError ? 'd-none' : ''}`}
             style={{ width: '120px', height: '120px', objectFit: 'cover' }} 
             onError={handleImageError}
@@ -76,14 +76,14 @@ function EditProfile({ profile, onUpdate, onCancel }) {
           />
           {previewError && (
             <div className="alert alert-warning">
-              无法加载头像预览，请检查URL是否正确
+              Unable to load avatar preview, please check the URL
             </div>
           )}
         </div>
       )}
       
       <div className="mb-3">
-        <label htmlFor="fullName" className="form-label">全名</label>
+        <label htmlFor="fullName" className="form-label">Full Name</label>
         <input
           type="text"
           id="fullName"
@@ -94,7 +94,7 @@ function EditProfile({ profile, onUpdate, onCancel }) {
       </div>
       
       <div className="mb-3">
-        <label htmlFor="bio" className="form-label">个人简介</label>
+        <label htmlFor="bio" className="form-label">Bio</label>
         <textarea
           id="bio"
           className="form-control"
@@ -111,14 +111,14 @@ function EditProfile({ profile, onUpdate, onCancel }) {
           onClick={onCancel}
           disabled={loading}
         >
-          取消
+          Cancel
         </button>
         <button 
           type="submit" 
           className="btn btn-primary"
           disabled={loading}
         >
-          {loading ? '保存中...' : '保存'}
+          {loading ? 'Saving...' : 'Save'}
         </button>
       </div>
     </form>

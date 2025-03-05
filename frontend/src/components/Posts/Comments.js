@@ -19,7 +19,7 @@ function Comments({ postId }) {
         setComments(response.data);
       } catch (error) {
         console.error('Error fetching comments:', error);
-        setError('加载评论失败');
+        setError('Failed to load comments');
       } finally {
         setLoading(false);
       }
@@ -43,7 +43,7 @@ function Comments({ postId }) {
       setSubmitting(true);
       const response = await commentApi.createComment(postId, newComment);
       
-      // 添加用户信息到评论以便显示
+      // Add user info to comment for display
       const commentWithUser = {
         ...response.data,
         username: userProfile.username,
@@ -55,14 +55,14 @@ function Comments({ postId }) {
       setNewComment('');
     } catch (error) {
       console.error('Error posting comment:', error);
-      setError('发表评论失败，请重试');
+      setError('Failed to post comment, please try again');
     } finally {
       setSubmitting(false);
     }
   };
   
   const handleDelete = async (commentId) => {
-    if (!window.confirm('确定要删除这条评论吗？')) {
+    if (!window.confirm('Are you sure you want to delete this comment?')) {
       return;
     }
     
@@ -71,13 +71,13 @@ function Comments({ postId }) {
       setComments(comments.filter(comment => comment.comment_id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
-      setError('删除评论失败，请重试');
+      setError('Failed to delete comment, please try again');
     }
   };
   
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -86,7 +86,7 @@ function Comments({ postId }) {
   };
   
   if (loading) {
-    return <div className="text-center py-3">加载评论中...</div>;
+    return <div className="text-center py-3">Loading comments...</div>;
   }
   
   return (
@@ -99,7 +99,7 @@ function Comments({ postId }) {
             <input
               type="text"
               className="form-control"
-              placeholder="写下你的评论..."
+              placeholder="Write your comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               disabled={submitting}
@@ -109,21 +109,21 @@ function Comments({ postId }) {
               className="btn btn-primary"
               disabled={submitting || !newComment.trim()}
             >
-              发布
+              Post
             </button>
           </div>
         </form>
       )}
       
       {comments.length === 0 ? (
-        <p className="text-center text-muted">还没有评论，来发表第一条吧！</p>
+        <p className="text-center text-muted">No comments yet. Be the first to comment!</p>
       ) : (
         <div>
           {comments.map(comment => (
             <div key={comment.comment_id} className="d-flex mb-2">
               <img 
                 src={comment.profile_image_url || '/default-avatar.png'} 
-                alt={`${comment.username}的头像`} 
+                alt={`${comment.username}'s avatar`} 
                 className="rounded-circle me-2" 
                 style={{ width: '32px', height: '32px', objectFit: 'cover' }}
               />
@@ -142,7 +142,7 @@ function Comments({ postId }) {
                     className="btn btn-sm text-danger bg-transparent border-0"
                     onClick={() => handleDelete(comment.comment_id)}
                   >
-                    删除
+                    Delete
                   </button>
                 )}
               </div>
