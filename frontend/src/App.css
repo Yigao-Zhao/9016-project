@@ -1,42 +1,177 @@
+:root {
+  /* Modern color palette */
+  --primary-color: #3a6bfb;
+  --primary-dark: #2a4eb0;
+  --secondary-color: #f3f4f6;
+  --accent-color: #6366f1;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --background-light: #ffffff;
+  --background-subtle: #f9fafb;
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-full: 9999px;
+  
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 body {
-  background-color: #f8f9fa;
+  font-family: var(--font-sans);
+  background-color: var(--background-subtle);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
 .card {
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  margin-bottom: 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease;
+  background-color: var(--background-light);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-footer {
+  border-top: 1px solid var(--border-color);
+  background-color: transparent;
+  padding: 1rem;
 }
 
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
 }
 
 .avatar-lg {
   width: 150px;
   height: 150px;
+  border-width: 3px;
 }
 
-/* Link hover effect */
+/* Button styles */
+.btn {
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* Form controls */
+.form-control {
+  border-radius: var(--radius-md);
+  border-color: var(--border-color);
+  padding: 0.625rem 0.75rem;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  border-color: var(--primary-color);
+}
+
+/* Link styling */
 a {
+  color: var(--primary-color);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 a:hover {
-  opacity: 0.8;
+  color: var(--primary-dark);
+  text-decoration: none;
 }
 
-/* 帖子样式 */
+/* Post styling */
 .post-image {
-  max-height: 400px;
+  max-height: 500px;
   object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
-/* 加载动画 */
+/* Loading animation */
 .spinner-border {
   width: 2rem;
   height: 2rem;
+  color: var(--primary-color);
+}
+
+/* Navbar improvements */
+.navbar {
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color)) !important;
+  box-shadow: var(--shadow-md);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Footer styling */
+footer {
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color)) !important;
+  padding: 1rem 0;
+  margin-top: 3rem;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
 }

@@ -26,7 +26,7 @@ function PostList({ userId = null }) {
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
-      setError('加载帖子失败，请稍后重试');
+      setError('Failed to load posts, please try again later');
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ function PostList({ userId = null }) {
     <div>
       {posts.length === 0 && !loading ? (
         <div className="text-center py-5">
-          <p className="text-muted">还没有帖子，快来分享第一条动态吧！</p>
+          <p className="text-muted">No posts yet. Be the first to share!</p>
         </div>
       ) : (
         <>
@@ -66,7 +66,7 @@ function PostList({ userId = null }) {
           {loading && (
             <div className="text-center py-3">
               <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">加载中...</span>
+                <span className="visually-hidden">Loading...</span>
               </div>
             </div>
           )}
@@ -77,7 +77,7 @@ function PostList({ userId = null }) {
                 className="btn btn-outline-primary" 
                 onClick={() => setPage(prev => prev + 1)}
               >
-                加载更多
+                Load More
               </button>
             </div>
           )}
