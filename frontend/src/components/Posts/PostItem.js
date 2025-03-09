@@ -13,7 +13,7 @@ function PostItem({ post, onDelete }) {
   
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -36,12 +36,12 @@ function PostItem({ post, onDelete }) {
       setIsLiked(!isLiked);
     } catch (error) {
       console.error('Error toggling like:', error);
-      setError('点赞操作失败，请重试');
+      setError('Failed to like post, please try again');
     }
   };
   
   const handleDelete = async () => {
-    if (!window.confirm('确定要删除这篇帖子吗？')) {
+    if (!window.confirm('Are you sure you want to delete this post?')) {
       return;
     }
     
@@ -52,7 +52,7 @@ function PostItem({ post, onDelete }) {
       }
     } catch (error) {
       console.error('Error deleting post:', error);
-      setError('删除帖子失败，请重试');
+      setError('Failed to delete post, please try again');
     }
   };
   
@@ -66,7 +66,7 @@ function PostItem({ post, onDelete }) {
         <div className="d-flex align-items-center">
           <img 
             src={post.profile_image_url || '/default-avatar.png'} 
-            alt={`${post.username}的头像`} 
+            alt={`${post.username}'s avatar`} 
             className="rounded-circle me-2" 
             style={{ width: '40px', height: '40px', objectFit: 'cover' }}
           />
@@ -83,7 +83,7 @@ function PostItem({ post, onDelete }) {
             className="btn btn-sm btn-outline-danger" 
             onClick={handleDelete}
           >
-            删除
+            Delete
           </button>
         )}
       </div>
@@ -94,7 +94,7 @@ function PostItem({ post, onDelete }) {
           <div className="text-center mb-3">
             <img 
               src={post.image_url} 
-              alt="帖子图片" 
+              alt="Post image" 
               className="img-fluid rounded" 
               style={{ maxHeight: '400px' }}
               onError={(e) => {

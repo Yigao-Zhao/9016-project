@@ -20,7 +20,7 @@ function Login() {
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
-      setError('登录失败，请检查您的邮箱和密码');
+      setError('Login failed, please check your email and password');
     } finally {
       setLoading(false);
     }
@@ -31,13 +31,13 @@ function Login() {
       <div className="col-md-6">
         <div className="card">
           <div className="card-body">
-            <h2 className="text-center mb-4">登录</h2>
+            <h2 className="text-center mb-4">Login</h2>
             
             {error && <div className="alert alert-danger">{error}</div>}
             
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">邮箱</label>
+                <label htmlFor="email" className="form-label">Email</label>
                 <input
                   type="email"
                   id="email"
@@ -49,7 +49,7 @@ function Login() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">密码</label>
+                <label htmlFor="password" className="form-label">Password</label>
                 <input
                   type="password"
                   id="password"
@@ -65,12 +65,12 @@ function Login() {
                 className="btn btn-primary w-100" 
                 disabled={loading}
               >
-                {loading ? '登录中...' : '登录'}
+                {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
             
             <div className="text-center mt-3">
-              还没有账号？ <Link to="/register">注册</Link>
+              Don't have an account? <Link to="/register">Register</Link>
             </div>
           </div>
         </div>

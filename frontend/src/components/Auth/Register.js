@@ -18,64 +18,82 @@ function Register() {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      return setError('两次输入的密码不匹配');
+      return setError('Passwords do not match');
     }
 
     console.log("Registering with:", { email, password, username, fullName });
 
     try {
-      setError('');
-      setLoading(true);
-      
-      // 使用 Firebase 注册新用户
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;  // 获取当前用户信息
+    setError('');
+    setLoading(true);
 
-      // 获取 Firebase ID Token
-      const firebaseToken = await user.getIdToken();  // 获取 Firebase Token
+    let firebaseToken = null;
+    let user = null;
 
-      // 发送到后端进行注册
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+    try {
+        // 使用 Firebase 注册新用户
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        user = userCredential.user;  // 获取当前用户信息
+
+        // 获取 Firebase ID Token
+        firebaseToken = await user.getIdToken();  // 获取 Firebase Token
+    } catch (firebaseError) {
+        console.warn('Firebase registration failed, falling back to local registration:', firebaseError);
+
+        if (firebaseError.code === 'auth/email-already-in-use') {
+            setError('Email is already registered');
+            throw firebaseError;  // 终止流程
+        } else if (firebaseError.code === 'auth/weak-password') {
+            setError('Password is too weak, please use a stronger password');
+            throw firebaseError;  // 终止流程
+        }
+
+        // Firebase 注册失败，回退到本地 `register()`
+        await register(email, password, username, fullName);
+    }
+
+    // 发送到后端进行注册
+    const response = await fetch('http://localhost:3001/api/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          username,
-          fullName,
-          firebaseToken,  // 将 Firebase Token 发送到后端
-          password,       // 如果没有 Firebase Token，包含密码
+            email,
+            username,
+            fullName,
+            firebaseToken,  // 发送 Firebase Token
+            password,       // 如果没有 Firebase Token，也包含密码
         }),
-      });
+    });
 
-      const data = await response.json();
-      if (response.ok) {
+    const data = await response.json();
+    if (response.ok) {
         // 注册成功后跳转
         navigate('/');
-      } else {
-        setError(data.error || '注册失败，请重试');
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setError('注册失败，请重试');
-    } finally {
-      setLoading(false);
+    } else {
+        setError(data.error || 'Login Failed, Please try again.');
     }
-  };
+} catch (error) {
+    console.error('Registration error:', error);
+    setError('Login Failed, Please try again.');
+} finally {
+    setLoading(false);
+}
+
   
   return (
     <div className="row justify-content-center">
       <div className="col-md-6">
         <div className="card">
           <div className="card-body">
-            <h2 className="text-center mb-4">注册</h2>
+            <h2 className="text-center mb-4">Register</h2>
             
             {error && <div className="alert alert-danger">{error}</div>}
             
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">邮箱</label>
+                <label htmlFor="email" className="form-label">Email</label>
                 <input
                   type="email"
                   id="email"
@@ -87,7 +105,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="username" className="form-label">用户名</label>
+                <label htmlFor="username" className="form-label">Username</label>
                 <input
                   type="text"
                   id="username"
@@ -99,7 +117,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="fullName" className="form-label">全名</label>
+                <label htmlFor="fullName" className="form-label">Full Name</label>
                 <input
                   type="text"
                   id="fullName"
@@ -111,7 +129,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="password" className="form-label">密码</label>
+                <label htmlFor="password" className="form-label">Password</label>
                 <input
                   type="password"
                   id="password"
@@ -123,7 +141,7 @@ function Register() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label">确认密码</label>
+                <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
@@ -139,12 +157,12 @@ function Register() {
                 className="btn btn-primary w-100" 
                 disabled={loading}
               >
-                {loading ? '注册中...' : '注册'}
+                {loading ? 'Registering...' : 'Register'}
               </button>
             </form>
             
             <div className="text-center mt-3">
-              已有账号？ <Link to="/login">登录</Link>
+              Already have an account? <Link to="/login">Login</Link>
             </div>
           </div>
         </div>

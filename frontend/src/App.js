@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
 
-// 保护路由的组件
+// Components that protect routes
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
   
@@ -55,7 +55,7 @@ function App() {
           </main>
           <footer className="bg-dark text-white text-center py-3">
             <div className="container">
-              <p className="mb-0">&copy; {new Date().getFullYear()} 社交媒体应用</p>
+              <p className="mb-0">&copy; {new Date().getFullYear()} Social Media App</p>
             </div>
           </footer>
         </div>

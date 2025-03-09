@@ -10,11 +10,11 @@ function CreatePost() {
   const [previewError, setPreviewError] = useState(false);
   const navigate = useNavigate();
   
-  // 处理图片URL验证
+  // Handle image URL validation
   const validateImageUrl = (url) => {
     if (!url) return true;
     
-    // 简单的URL验证
+    // Simple URL validation
     const urlPattern = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/.*)?$/i;
     return urlPattern.test(url);
   };
@@ -23,17 +23,17 @@ function CreatePost() {
     e.preventDefault();
     
     if (!content.trim()) {
-      return setError('帖子内容不能为空');
+      return setError('Post content cannot be empty');
     }
     
     if (imageUrl && !validateImageUrl(imageUrl)) {
-      return setError('请输入有效的图片URL');
+      return setError('Please enter a valid image URL');
     }
     
     try {
       setLoading(true);
       
-      // 创建帖子
+      // Create post
       await postApi.createPost({
         content,
         imageUrl: imageUrl.trim() || null
@@ -42,7 +42,7 @@ function CreatePost() {
       navigate('/');
     } catch (error) {
       console.error('Error creating post:', error);
-      setError('发布帖子失败，请重试');
+      setError('Failed to create post, please try again');
     } finally {
       setLoading(false);
     }
@@ -61,19 +61,19 @@ function CreatePost() {
       <div className="col-md-8">
         <div className="card">
           <div className="card-header">
-            <h5 className="mb-0">发布新帖子</h5>
+            <h5 className="mb-0">Create New Post</h5>
           </div>
           <div className="card-body">
             {error && <div className="alert alert-danger">{error}</div>}
             
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="content" className="form-label">内容</label>
+                <label htmlFor="content" className="form-label">Content</label>
                 <textarea
                   id="content"
                   className="form-control"
                   rows="5"
-                  placeholder="分享你的想法..."
+                  placeholder="Share your thoughts..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   required
@@ -81,7 +81,7 @@ function CreatePost() {
               </div>
               
               <div className="mb-3">
-                <label htmlFor="imageUrl" className="form-label">图片URL（可选）</label>
+                <label htmlFor="imageUrl" className="form-label">Image URL (Optional)</label>
                 <input
                   type="url"
                   id="imageUrl"
@@ -90,15 +90,15 @@ function CreatePost() {
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                 />
-                <small className="text-muted">输入图片的完整URL地址</small>
+                <small className="text-muted">Enter the complete URL of the image</small>
               </div>
               
               {imageUrl && !previewError && (
                 <div className="mb-3">
-                  <p className="mb-1">图片预览：</p>
+                  <p className="mb-1">Image Preview:</p>
                   <img 
                     src={imageUrl} 
-                    alt="预览" 
+                    alt="Preview" 
                     className="img-fluid rounded border" 
                     style={{ maxHeight: '200px' }}
                     onError={handleImageError}
@@ -109,7 +109,7 @@ function CreatePost() {
               
               {imageUrl && previewError && (
                 <div className="alert alert-warning mb-3">
-                  无法加载图片预览，请检查URL是否正确
+                  Unable to load image preview, please check the URL
                 </div>
               )}
               
@@ -120,14 +120,14 @@ function CreatePost() {
                   onClick={() => navigate('/')}
                   disabled={loading}
                 >
-                  取消
+                  Cancel
                 </button>
                 <button 
                   type="submit" 
                   className="btn btn-primary"
                   disabled={loading}
                 >
-                  {loading ? '发布中...' : '发布'}
+                  {loading ? 'Posting...' : 'Post'}
                 </button>
               </div>
             </form>
