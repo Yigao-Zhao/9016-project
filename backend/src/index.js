@@ -13,46 +13,53 @@ const commentRoutes = require('./routes/comments');
 
 // 创建Express应用
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: 'Sd221456!',
-  database: 'socialmedia',
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '336753',
+  database: process.env.DB_NAME || 'socialmedia',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-console.log('环境变量：', {
-  DB_HOST: process.env.DB_HOST,
-  DB_USER: process.env.DB_USER,
-  DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_NAME: process.env.DB_NAME
+// **CORS 配置**
+app.use(cors({
+  origin: '*',  // 允许所有来源访问
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// 预检请求处理
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.status(204).end();
 });
 
-// 中间件
+// **全局中间件**
 app.use(helmet()); // 安全头
-app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// 使数据库连接在路由中可用
+// **数据库连接中间件**
 app.use((req, res, next) => {
   req.db = pool;
   next();
 });
 
-// 健康检查端点
+// **健康检查端点**
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
 app.get('/ready', async (req, res) => {
   try {
-    // 检查数据库连接
     const [result] = await pool.query('SELECT NOW() as now');
     res.status(200).json({ status: 'ready', time: result[0].now });
   } catch (err) {
@@ -61,24 +68,24 @@ app.get('/ready', async (req, res) => {
   }
 });
 
-// 应用路由
+// **应用路由**
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 
-// 404处理
+// **404 处理**
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// 错误处理中间件
+// **全局错误处理中间件**
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something broke!' });
 });
 
-// 启动服务器
+// **启动服务器**
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

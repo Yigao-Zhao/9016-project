@@ -13,10 +13,17 @@ const api = axios.create({
 
 // Add Request Interceptor & Add token
 api.interceptors.request.use(async (config) => {
-  const user = auth.currentUser;
+  const user = auth.currentUser;  // 获取当前用户
   if (user) {
-    const token = await user.getIdToken();
-    config.headers.Authorization = `Bearer ${token}`;
+    try {
+      // 获取用户的 Firebase Token
+      const token = await user.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;  // 添加 token 到请求头
+    } catch (error) {
+      console.error('Token error:', error);  // 错误处理
+    }
+  } else {
+    console.log('No user logged in');
   }
   return config;
 }, (error) => {

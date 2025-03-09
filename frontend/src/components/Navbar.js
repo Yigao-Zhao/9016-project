@@ -22,6 +22,8 @@ function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  console.log('Current User', currentUser);  // 在这里打印 currentUser
+
   const handleLogout = async () => {
     try {
       await logout();

@@ -7,6 +7,7 @@ import EditProfile from './EditProfile';
 
 function Profile() {
   const { username } = useParams();
+  console.log("Extracted username from URL:", username);
   const { userProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -20,6 +21,8 @@ function Profile() {
         setLoading(true);
         // Find user by username
         const usersResponse = await userApi.getUsers();
+        console.log("Users response:", usersResponse.data);
+        console.log("Looking for username:", username);
         const foundUser = usersResponse.data.find(user => user.username === username);
         
         if (!foundUser) {
