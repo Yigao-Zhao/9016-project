@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Firebase认证库
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -10,34 +10,77 @@ function Register() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
   const navigate = useNavigate();
   
+  const auth = getAuth(); // 获取 Firebase 认证实例
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
       return setError('Passwords do not match');
     }
-    
+
+    console.log("Registering with:", { email, password, username, fullName });
+
     try {
-      setError('');
-      setLoading(true);
-      await register(email, password, username, fullName);
-      navigate('/');
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error.code === 'auth/email-already-in-use') {
-        setError('Email is already registered');
-      } else if (error.code === 'auth/weak-password') {
-        setError('Password is too weak, please use a stronger password');
-      } else {
-        setError('Failed to register, please try again');
-      }
-    } finally {
-      setLoading(false);
+    setError('');
+    setLoading(true);
+
+    let firebaseToken = null;
+    let user = null;
+
+    try {
+        // 使用 Firebase 注册新用户
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        user = userCredential.user;  // 获取当前用户信息
+
+        // 获取 Firebase ID Token
+        firebaseToken = await user.getIdToken();  // 获取 Firebase Token
+    } catch (firebaseError) {
+        console.warn('Firebase registration failed, falling back to local registration:', firebaseError);
+
+        if (firebaseError.code === 'auth/email-already-in-use') {
+            setError('Email is already registered');
+            throw firebaseError;  // 终止流程
+        } else if (firebaseError.code === 'auth/weak-password') {
+            setError('Password is too weak, please use a stronger password');
+            throw firebaseError;  // 终止流程
+        }
+
+        // Firebase 注册失败，回退到本地 `register()`
+        await register(email, password, username, fullName);
     }
-  };
+
+    // 发送到后端进行注册
+    const response = await fetch('http://localhost:3001/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            username,
+            fullName,
+            firebaseToken,  // 发送 Firebase Token
+            password,       // 如果没有 Firebase Token，也包含密码
+        }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+        // 注册成功后跳转
+        navigate('/');
+    } else {
+        setError(data.error || 'Login Failed, Please try again.');
+    }
+} catch (error) {
+    console.error('Registration error:', error);
+    setError('Login Failed, Please try again.');
+} finally {
+    setLoading(false);
+}
+
   
   return (
     <div className="row justify-content-center">

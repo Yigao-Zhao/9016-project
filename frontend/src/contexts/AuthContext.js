@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
 
   async function register(email, password, username, fullName) {
+    
     try {
       // Create user in Firebase
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -32,7 +33,8 @@ export function AuthProvider({ children }) {
         uid: userCredential.user.uid,
         username,
         email,
-        fullName
+        fullName,
+        password
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -42,7 +44,7 @@ export function AuthProvider({ children }) {
       setUserProfile(response.data);
       return userCredential.user;
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration error:", error.response?.data || error.message);
       throw error;
     }
   }
