@@ -6,6 +6,8 @@ function Navbar() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   
+  console.log('Current User', currentUser);  // 在这里打印 currentUser
+
   const handleLogout = async () => {
     try {
       await logout();
