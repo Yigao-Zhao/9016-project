@@ -71,7 +71,7 @@ function Register() {
         }
 
         // Firebase 注册失败，回退到本地 `register()`
-        await register(email, password, username, fullName);
+        //await register(email, password, username, fullName);
     }
 
     // 发送到后端进行注册
@@ -192,6 +192,6 @@ function Register() {
     </div>
   );
 }
-}
+
 
 export default Register;
