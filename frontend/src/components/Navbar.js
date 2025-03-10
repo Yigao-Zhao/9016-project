@@ -72,10 +72,9 @@ function Navbar() {
                 </li>
                 
                 <li className="nav-item dropdown">
-                  <a
+                  <button
                     className="nav-link dropdown-toggle d-flex align-items-center"
-                    href="#"
-                    role="button"
+                    type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
@@ -90,7 +89,7 @@ function Navbar() {
                       <i className="bi bi-person-circle me-1"></i>
                     )}
                     <span>{currentUser.displayName || 'Account'}</span>
-                  </a>
+                  </button>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>
                       <Link
